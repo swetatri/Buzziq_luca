@@ -1,0 +1,210 @@
+for chatbot ....Go to GEMini ai.....here
+https://aistudio.google.com/apikey
+to again create a key... if it expired....then go to chatbot.php and add your key here
+Api key copied
+// Gemini API Key (Replace with your new secure API key)
+    $api_key = "add_here_the_key"; ...here
+
+
+ Steps to Regenerate and Update Your Gemini API Key for Chatbot
+If your Gemini API key expires or needs to be replaced, follow these steps:
+
+Step 1: Generate a New API Key
+1️⃣ Go to Google AI Studio.
+2️⃣ Sign in with your Google account.
+3️⃣ Click on "Create API Key" to generate a new key.
+4️⃣ Copy the generated API key.
+
+Step 2: Update Your Chatbot Code
+1️⃣ Open your chatbot.php file.
+2️⃣ Locate the following line in your code:
+
+php
+Copy
+Edit
+// Gemini API Key (Replace with your new secure API key)
+$api_key = "add_here_the_key";
+3️⃣ Replace "add_here_the_key" with the newly copied API key.
+4️⃣ Save the file.
+
+Step 3: Secure Your API Key (Optional but Recommended)
+🔹 Avoid hardcoding your API key directly in the PHP file.
+🔹 Use environment variables or store it in a separate config.php file for better security.
+
+🔹 Now your chatbot is updated and ready to use with the new API key! 🚀
+
+
+
+
+
+add this In index.php
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .chat-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color:rgb(37, 211, 46);
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .chat-container {
+            display: none;
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            width: 300px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        .chat-header {
+            background:rgb(37, 147, 211);
+            color: white;
+            padding: 10px;
+            text-align: center;
+            font-weight: bold;
+        }
+        .chat-box {
+            height: 300px;
+            overflow-y: auto;
+            padding: 10px;
+        }
+        .message {
+            padding: 8px;
+            border-radius: 10px;
+            margin: 5px;
+            max-width: 80%;
+        }
+        .user-message {
+            background:rgb(211, 133, 37);
+            align-self: flex-end;
+            text-align: right;
+        }
+        .bot-message {
+            background: #E0E0E0;
+            align-self: flex-start;
+        }
+        .chat-input {
+            display: flex;
+            padding: 10px;
+            border-top: 1px solid #ccc;
+        }
+        .chat-input input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .chat-input button {
+            background:rgb(37, 147, 211);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            margin-left: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <button class="chat-button" onclick="toggleChat()">Luca 😇</button>
+    <div class="chat-container" id="chatContainer">
+        <div class="chat-header">Luca</div>
+        <div class="chat-box" id="chatBox"></div>
+        <div class="chat-input">
+            <input type="text" id="userInput" placeholder="Type a message...">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <script>
+        function toggleChat() {
+            let chatContainer = document.getElementById("chatContainer");
+            chatContainer.style.display = chatContainer.style.display === "none" ? "block" : "none";
+        }
+
+        function sendMessage() {
+            let userInput = document.getElementById("userInput");
+            let chatBox = document.getElementById("chatBox");
+            let message = userInput.value.trim();
+            
+            if (message === "") return;
+            
+            let userMessage = `<div class='message user-message'>${message}</div>`;
+            chatBox.innerHTML += userMessage;
+            userInput.value = "";
+            chatBox.scrollTop = chatBox.scrollHeight;
+            
+            fetch('chatbot.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: 'message=' + encodeURIComponent(message)
+            })
+            .then(response => response.text())
+            .then(data => {
+                let botMessage = `<div class='message bot-message'>${data}</div>`;
+                chatBox.innerHTML += botMessage;
+                chatBox.scrollTop = chatBox.scrollHeight;
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+</body>
+</html>
+
+add this In chatbot.php
+
+<?php
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $user_input = $_POST['message'];
+
+    // Gemini API Key (Replace with your new secure API key)
+    $api_key = "AIzaSyC9NKkWNHCOm9Z2r8lz_gww8x2emmVlQiw"; 
+
+    // Gemini API Endpoint (Using Gemini 2.0 Flash)
+    $url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=$api_key";
+
+    // Request payload (correct format for Gemini 2.0 Flash)
+    $data = [
+        "contents" => [
+            ["parts" => [["text" => $user_input]]]
+        ]
+    ];
+
+    // Convert data to JSON
+    $json_data = json_encode($data);
+
+    // cURL request to Gemini API
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, ["Content-Type: application/json"]);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $json_data);
+    
+    // Execute cURL request
+    $response = curl_exec($ch);
+    curl_close($ch);
+
+    // Decode API response
+    $response_data = json_decode($response, true);
+
+    // Extract chatbot response correctly
+    if (isset($response_data['candidates'][0]['content']['parts'][0]['text'])) {
+        echo $response_data['candidates'][0]['content']['parts'][0]['text'];
+    } else {
+        echo "Sorry, I couldn't process your request.";
+    }
+}
+?>
